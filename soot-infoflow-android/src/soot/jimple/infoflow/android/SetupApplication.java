@@ -904,7 +904,7 @@ public class SetupApplication implements ITaintWrapperDataFlowAnalysis {
 	 * scans the code including unreachable methods.
 	 * 
 	 * @param lfp        The layout file parser to be used for analyzing UI controls
-	 * @param entryPoint The entry point for which to calculate the callbacks. Pass
+	 * param entryPoint The entry point for which to calculate the callbacks. Pass
 	 *                   null to calculate callbacks for all entry points.
 	 * @throws IOException Thrown if a required configuration cannot be read
 	 */
@@ -993,7 +993,7 @@ public class SetupApplication implements ITaintWrapperDataFlowAnalysis {
 	 * Creates the main method based on the current callback information, injects it
 	 * into the Soot scene.
 	 * 
-	 * @param The class name of a component to create a main method containing only
+	 * @param component The class name of a component to create a main method containing only
 	 *            that component, or null to create main method for all components
 	 */
 	private void createMainMethod(SootClass component) {
