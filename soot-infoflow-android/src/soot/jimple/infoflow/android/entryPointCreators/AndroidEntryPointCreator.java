@@ -222,6 +222,31 @@ public class AndroidEntryPointCreator extends AbstractAndroidEntryPointCreator i
 			switch (componentType) {
 			case Activity:
 				Set<SootClass> activityFragments = fragmentClasses == null ? null : fragmentClasses.get(currentClass);
+				//Added by ZackC to get the application to build the methods in Fragments
+				//Might add the same Fragments multiple times if the Android App has multiple Activity classes
+				//If so, then fix that problem later
+				if (activityFragments == null || activityFragments.size() == 0){
+					HashSet<SootClass> tempActivityFragments = new HashSet<SootClass>();
+					Iterator<SootClass> applicationClassIter = Scene.v().getApplicationClasses().iterator();
+					while(applicationClassIter.hasNext()){
+						SootClass activeClass = applicationClassIter.next();
+						//System.out.println("application class in AndroidEntryPointCreator line 229: "+activeClass.getName());
+						//check all parents of the class to see if any of them are the Fragment class
+						SootClass classToCheck = activeClass;
+						while(classToCheck.hasSuperclass()){
+							SootClass superClass = classToCheck.getSuperclass();
+							//System.out.println("AndroidEntryPointCreator line 234; super class name: "+superClass.getName());
+							if(superClass.getName().contains("android.app.Fragment")){
+								//System.out.println("!!!! ActivityEntryPointCreator line 240: added: "+ activeClass.getName());
+								tempActivityFragments.add(activeClass);
+								break;
+							}
+						 	classToCheck = superClass;
+						}
+					}
+					activityFragments = tempActivityFragments;
+				}
+				//End of code added by ZackC
 				componentCreator = new ActivityEntryPointCreator(currentClass, applicationClass,
 						activityLifecycleCallbacks, activityFragments, callbackClassToField);
 				break;
@@ -380,9 +405,9 @@ public class AndroidEntryPointCreator extends AbstractAndroidEntryPointCreator i
 	/**
 	 * Adds calls to the callback methods defined in the application class
 	 * 
-	 * @param applicationClass The class in which the user-defined application is
+	 * param applicationClass The class in which the user-defined application is
 	 *                         implemented
-	 * @param applicationLocal The local containing the instance of the user-defined
+	 * param applicationLocal The local containing the instance of the user-defined
 	 *                         application
 	 */
 	private void addApplicationCallbackMethods() {
